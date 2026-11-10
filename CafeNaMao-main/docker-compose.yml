@@ -1,0 +1,72 @@
+name: cafe-na-mao
+
+services:
+  # API Spring Boot. O build da imagem executa os testes JUnit e o JaCoCo.
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: cafe-na-mao-api:local
+    ports:
+      - "${API_PORT:-8080}:8080"
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/bebidas"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 30s
+    volumes:
+      # Mantém o banco H2 entre reinícios do container.
+      - dados-api:/app/data
+    restart: unless-stopped
+
+  # Testes unitários do front-end, executados em um Node isolado.
+  testes-frontend:
+    image: node:26-alpine
+    working_dir: /app
+    volumes:
+      - ./js:/app/js:ro
+      - ./tests:/app/tests:ro
+      - ./package.json:/app/package.json:ro
+    command: ["npm", "test"]
+    profiles: ["testes"]
+
+  # Testes de contrato da API com Newman. A API é acessada pelo nome do serviço.
+  testes-api:
+    image: node:26-alpine
+    working_dir: /work
+    volumes:
+      # Leitura da coleção e escrita do relatório newman-report.json.
+      - ./postman:/work/postman
+    depends_on:
+      api:
+        condition: service_healthy
+    command:
+      - npx
+      - --yes
+      - newman@6.2.1
+      - run
+      - /work/postman/CafeNaMao.postman_collection.json
+      - --environment
+      - /work/postman/CafeNaMao.postman_environment.json
+      - --env-var
+      - base_url=http://api:8080
+      - --reporters
+      - cli,json
+      - --reporter-json-export
+      - /work/postman/newman-report.json
+    profiles: ["testes"]
+
+  # Verificação completa do backend via Maven, útil para CI e auditoria.
+  testes-backend:
+    image: maven:3.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./backend:/workspace
+    command: ["sh", "./mvnw", "-B", "verify"]
+    profiles: ["testes"]
+
+volumes:
+  dados-api:

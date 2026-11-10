@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Conheça o Café na Mão: projeto acadêmico de pedidos de bebidas com pagamento simulado e foco em qualidade de software."
+    />
+    <title>Sobre | Café na Mão</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="pular-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="cabecalho">
+      <div class="container cabecalho__conteudo">
+        <a class="logo" href="index.html">
+          <span class="logo__selo" aria-hidden="true">C</span>
+          <span>Café na Mão</span>
+        </a>
+
+        <nav class="menu" aria-label="Navegação principal">
+          <a class="menu__link" href="index.html">Início</a>
+          <a class="menu__link" href="menu.html">Menu</a>
+          <a class="menu__link" href="pedidos.html">Pedidos</a>
+          <a class="menu__link menu__link--ativo" href="sobre.html" aria-current="page">
+            Sobre
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <section class="catalogo container" aria-labelledby="titulo-sobre">
+        <div class="catalogo__cabecalho">
+          <div>
+            <p class="selo">Sobre o projeto</p>
+            <h1 id="titulo-sobre">Café na Mão</h1>
+          </div>
+          <p class="catalogo__intro">
+            Um projeto acadêmico que simula a compra de bebidas em uma máquina de
+            café: do catálogo à confirmação do pedido, com foco em qualidade de
+            software.
+          </p>
+        </div>
+      </section>
+
+      <section class="passos container" aria-labelledby="titulo-proposta">
+        <div class="passos__cabecalho">
+          <p class="selo">A proposta</p>
+          <h2 id="titulo-proposta">Pedir café sem complicação</h2>
+        </div>
+
+        <ul class="passos__lista">
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">01</span>
+            <h3>Do catálogo à retirada</h3>
+            <p>
+              O cliente consulta as bebidas, escolhe a quantidade, revisa o
+              carrinho e confirma o pedido em poucos passos.
+            </p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">02</span>
+            <h3>Pagamento simulado</h3>
+            <p>
+              A forma de pagamento pode ser dinheiro ou cartão fictício. Nenhum
+              número, validade ou código de cartão real é solicitado ou guardado.
+            </p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">03</span>
+            <h3>Qualidade em foco</h3>
+            <p>
+              O comportamento é coberto por testes automatizados e por uma
+              verificação manual de interface, acessibilidade e responsividade.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="passos container" aria-labelledby="titulo-funcionalidades">
+        <div class="passos__cabecalho">
+          <p class="selo">O que já funciona</p>
+          <h2 id="titulo-funcionalidades">Funcionalidades implementadas</h2>
+        </div>
+
+        <ul class="passos__lista">
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">01</span>
+            <h3>Catálogo e detalhes</h3>
+            <p>
+              Seis bebidas com categoria, descrição e preço em centavos, além de
+              estados de carregamento, lista vazia e erro. Os detalhes abrem em
+              um painel acessível com seleção de quantidade.
+            </p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">02</span>
+            <h3>Carrinho e pagamento</h3>
+            <p>
+              Itens podem ser adicionados, somados, alterados ou removidos. O
+              carrinho fica salvo no navegador e a conclusão exige quantidade
+              válida e forma de pagamento escolhida.
+            </p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">03</span>
+            <h3>Histórico e status</h3>
+            <p>
+              Cada pedido confirmado gera um registro com número, data, itens,
+              total, pagamento e status. O histórico pode ter o status alterado
+              e ser limpo com confirmação.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="passos container" aria-labelledby="titulo-construcao">
+        <div class="passos__cabecalho">
+          <p class="selo">Como foi construído</p>
+          <h2 id="titulo-construcao">Tecnologia e transparência</h2>
+        </div>
+
+        <ul class="passos__lista">
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">01</span>
+            <h3>Front-end estático</h3>
+            <p>
+              HTML semântico, CSS neobrutalista e JavaScript puro em scripts
+              clássicos. As páginas funcionam diretamente pelo navegador, sem
+              servidor local e sem build.
+            </p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">02</span>
+            <h3>Testes com Node.js</h3>
+            <p>
+              O projeto usa o executor de testes nativo do Node.js, sem
+              dependências externas. Os testes cobrem dados, quantidades,
+              carrinho, histórico e pagamento simulado.
+            </p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">03</span>
+            <h3>Limitações atuais</h3>
+            <p>
+              Ainda não existem backend, banco de dados, API REST ou pipeline de
+              integração contínua. Carrinho e histórico ficam apenas no
+              armazenamento local do navegador.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="chamada container" aria-labelledby="titulo-chamada-sobre">
+        <div>
+          <h2 id="titulo-chamada-sobre">Quer ver funcionando?</h2>
+          <p>Explore o menu e monte seu primeiro pedido simulado.</p>
+        </div>
+        <a class="botao botao--primario" href="menu.html">Ver o menu</a>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <div class="container rodape__conteudo">
+        <p><strong>Café na Mão</strong> — projeto acadêmico de pedidos de bebidas.</p>
+        <p>Pagamento simulado. Nenhum dado real de cartão é coletado.</p>
+      </div>
+    </footer>
+  </body>
+</html>

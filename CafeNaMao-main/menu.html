@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Catálogo de bebidas do Café na Mão, com nome, descrição e preço."
+    />
+    <title>Menu | Café na Mão</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="pular-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="cabecalho">
+      <div class="container cabecalho__conteudo">
+        <a class="logo" href="index.html">
+          <span class="logo__selo" aria-hidden="true">C</span>
+          <span>Café na Mão</span>
+        </a>
+
+        <nav class="menu" aria-label="Navegação principal">
+          <a class="menu__link" href="index.html">Início</a>
+          <a class="menu__link menu__link--ativo" href="menu.html" aria-current="page">Menu</a>
+          <a class="menu__link" href="pedidos.html">Pedidos</a>
+          <a class="menu__link" href="sobre.html">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <section class="catalogo container" aria-labelledby="titulo-catalogo">
+        <div class="catalogo__cabecalho">
+          <div>
+            <p class="selo">Escolha a sua</p>
+            <h1 id="titulo-catalogo">Nosso menu</h1>
+          </div>
+          <p class="catalogo__intro">
+            Bebidas preparadas na hora. Preços em reais e pagamento simulado nesta
+            versão acadêmica.
+          </p>
+        </div>
+
+        <p id="origem-catalogo" class="catalogo__origem" hidden></p>
+
+        <p id="status-catalogo" class="visualmente-oculto" role="status" aria-live="polite"></p>
+
+        <div id="resumo-carrinho" class="resumo-carrinho" hidden>
+          <p class="resumo-carrinho__texto">
+            Seu pedido: <strong id="resumo-carrinho-texto"></strong>
+          </p>
+          <a class="botao botao--primario resumo-carrinho__link" href="pedidos.html">
+            Ver pedido
+          </a>
+        </div>
+
+        <div id="estado-catalogo" class="estado" hidden>
+          <p id="mensagem-estado" class="estado__mensagem"></p>
+          <div id="acao-estado" class="estado__acao"></div>
+        </div>
+
+        <div id="lista-bebidas" class="catalogo__grade" aria-busy="true"></div>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <div class="container rodape__conteudo">
+        <p><strong>Café na Mão</strong> — projeto acadêmico de pedidos de bebidas.</p>
+        <p>Pagamento simulado. Nenhum dado real de cartão é coletado.</p>
+      </div>
+    </footer>
+
+    <dialog id="painel-detalhes" class="detalhes" aria-labelledby="detalhes-titulo">
+      <div class="detalhes__conteudo">
+        <p id="detalhes-categoria" class="detalhes__categoria"></p>
+        <h2 id="detalhes-titulo"></h2>
+        <p id="detalhes-descricao" class="detalhes__descricao"></p>
+
+        <dl class="detalhes__valores">
+          <div>
+            <dt>Preço unitário</dt>
+            <dd id="detalhes-preco"></dd>
+          </div>
+          <div>
+            <dt>Total parcial</dt>
+            <dd id="detalhes-total" aria-live="polite"></dd>
+          </div>
+        </dl>
+
+        <div class="detalhes__quantidade">
+          <label for="detalhes-quantidade">Quantidade</label>
+          <p id="detalhes-ajuda" class="detalhes__ajuda">
+            Escolha de 1 a 10 unidades.
+          </p>
+          <input
+            id="detalhes-quantidade"
+            name="quantidade"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            max="10"
+            step="1"
+            value="1"
+            aria-describedby="detalhes-ajuda detalhes-erro"
+          />
+          <p id="detalhes-erro" class="detalhes__erro" role="alert"></p>
+        </div>
+
+        <div class="detalhes__acoes">
+          <button type="button" id="detalhes-adicionar" class="botao botao--primario">
+            Adicionar ao pedido
+          </button>
+          <button type="button" id="detalhes-fechar" class="botao botao--secundario">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <script src="js/dados.js" defer></script>
+    <script src="js/detalhes.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/carrinho.js" defer></script>
+    <script src="js/menu.js" defer></script>
+  </body>
+</html>

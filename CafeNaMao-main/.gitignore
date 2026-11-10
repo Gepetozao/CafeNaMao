@@ -1,0 +1,20 @@
+# Build Java
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Banco H2 local
+backend/data/
+data/
+
+# Node e ferramentas
+node_modules/
+npm-debug.log*
+
+# Relatórios locais
+postman/newman-report.json
+
+# Sistema e editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

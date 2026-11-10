@@ -1,0 +1,231 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # O repositório pode ter o projeto na raiz ou dentro de CafeNaMao-main/.
+  localizar-projeto:
+    name: Localizar projeto
+    runs-on: ubuntu-latest
+    outputs:
+      diretorio: ${{ steps.projeto.outputs.diretorio }}
+      encontrado: ${{ steps.projeto.outputs.encontrado }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detectar pasta do projeto
+        id: projeto
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f package.json ] && [ -d backend ]; then
+            echo "diretorio=." >> "$GITHUB_OUTPUT"
+            echo "encontrado=true" >> "$GITHUB_OUTPUT"
+          elif [ -f CafeNaMao-main/package.json ] && [ -d CafeNaMao-main/backend ]; then
+            echo "diretorio=CafeNaMao-main" >> "$GITHUB_OUTPUT"
+            echo "encontrado=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "diretorio=." >> "$GITHUB_OUTPUT"
+            echo "encontrado=false" >> "$GITHUB_OUTPUT"
+            echo "::error::Pasta do projeto não encontrada (package.json + backend/)."
+          fi
+
+  frontend:
+    name: Front-end (Node)
+    needs: localizar-projeto
+    if: needs.localizar-projeto.outputs.encontrado == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+
+      - name: Executar testes do front-end
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: npm test
+
+  backend:
+    name: Backend (Maven/JUnit)
+    needs: localizar-projeto
+    if: needs.localizar-projeto.outputs.encontrado == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: ${{ needs.localizar-projeto.outputs.diretorio }}/backend/pom.xml
+
+      - name: Executar verify (testes + JaCoCo)
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}/backend
+        run: |
+          chmod +x mvnw
+          ./mvnw -B verify
+
+      - name: Publicar relatório JaCoCo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco
+          path: ${{ needs.localizar-projeto.outputs.diretorio }}/backend/target/site/jacoco
+          if-no-files-found: warn
+
+      - name: Publicar relatórios de teste
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire
+          path: ${{ needs.localizar-projeto.outputs.diretorio }}/backend/target/surefire-reports
+          if-no-files-found: warn
+
+  newman:
+    name: API (Newman)
+    needs:
+      - localizar-projeto
+      - backend
+    if: needs.localizar-projeto.outputs.encontrado == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: ${{ needs.localizar-projeto.outputs.diretorio }}/backend/pom.xml
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+
+      - name: Gerar JAR
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}/backend
+        run: |
+          chmod +x mvnw
+          ./mvnw -B -DskipTests package
+
+      - name: Executar API e coleção Postman com Newman
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOG="$RUNNER_TEMP/api-newman.log"
+          PID_FILE="$RUNNER_TEMP/api-newman.pid"
+
+          encerrar_api() {
+            if [ -f "$PID_FILE" ]; then
+              kill "$(cat "$PID_FILE")" 2>/dev/null || true
+            fi
+          }
+          trap encerrar_api EXIT
+
+          nohup java -jar backend/target/cafe-na-mao-api-0.1.0-SNAPSHOT.jar \
+            --server.port=18080 \
+            "--spring.datasource.url=jdbc:h2:mem:cafe-na-mao-ci;DB_CLOSE_DELAY=-1" \
+            > "$LOG" 2>&1 &
+          echo $! > "$PID_FILE"
+
+          for tentativa in $(seq 1 90); do
+            if curl -fsS http://localhost:18080/api/bebidas > /dev/null; then
+              echo "API pronta na tentativa $tentativa."
+              break
+            fi
+            sleep 1
+          done
+
+          if ! curl -fsS http://localhost:18080/api/bebidas > /dev/null; then
+            echo "::error::A API não respondeu em 90 segundos."
+            cat "$LOG"
+            exit 1
+          fi
+
+          npx --yes newman@6.2.1 run postman/CafeNaMao.postman_collection.json \
+            --environment postman/CafeNaMao.postman_environment.json \
+            --env-var base_url=http://localhost:18080 \
+            --reporters cli,json \
+            --reporter-json-export postman/newman-report.json
+
+      - name: Publicar relatório do Newman
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman
+          path: ${{ needs.localizar-projeto.outputs.diretorio }}/postman/newman-report.json
+          if-no-files-found: warn
+
+  docker:
+    name: Docker Compose
+    needs: localizar-projeto
+    if: needs.localizar-projeto.outputs.encontrado == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validar docker-compose.yml
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: docker compose config
+
+      - name: Build da API (executa testes JUnit no Dockerfile)
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: docker compose build api
+
+      - name: Testes do front-end em container
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: docker compose --profile testes run --rm --no-deps testes-frontend
+
+      - name: Subir API e aguardar healthcheck
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: docker compose up -d --wait api
+
+      - name: Executar Newman em container
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: docker compose --profile testes run --rm --no-deps testes-api
+
+      - name: Publicar relatório do Newman
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-docker
+          path: ${{ needs.localizar-projeto.outputs.diretorio }}/postman/newman-report.json
+          if-no-files-found: warn
+
+      - name: Mostrar logs da API em caso de falha
+        if: failure()
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: docker compose logs api
+
+      - name: Encerrar containers
+        if: always()
+        working-directory: ${{ needs.localizar-projeto.outputs.diretorio }}
+        run: docker compose --profile testes down -v

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Revise o carrinho do Café na Mão, escolha a forma de pagamento simulada e consulte o histórico de pedidos."
+    />
+    <title>Pedidos | Café na Mão</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="pular-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="cabecalho">
+      <div class="container cabecalho__conteudo">
+        <a class="logo" href="index.html">
+          <span class="logo__selo" aria-hidden="true">C</span>
+          <span>Café na Mão</span>
+        </a>
+
+        <nav class="menu" aria-label="Navegação principal">
+          <a class="menu__link" href="index.html">Início</a>
+          <a class="menu__link" href="menu.html">Menu</a>
+          <a class="menu__link menu__link--ativo" href="pedidos.html" aria-current="page">
+            Pedidos
+          </a>
+          <a class="menu__link" href="sobre.html">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <section class="pedidos container" aria-labelledby="titulo-pedidos">
+        <div class="pedidos__cabecalho">
+          <p class="selo">Revise e confirme</p>
+          <h1 id="titulo-pedidos">Seu pedido</h1>
+          <p class="pedidos__intro">
+            Ajuste as quantidades, remova o que não quiser e confirme o pedido
+            simulado quando estiver pronto.
+          </p>
+        </div>
+
+        <p id="status-pedido" class="visualmente-oculto" role="status" aria-live="polite"></p>
+
+        <div id="carrinho-vazio" class="estado" hidden>
+          <p class="estado__mensagem">Seu carrinho está vazio.</p>
+          <div class="estado__acao">
+            <a class="botao botao--primario" href="menu.html">Escolher bebidas</a>
+          </div>
+        </div>
+
+        <div id="carrinho-conteudo" class="carrinho" hidden>
+          <ul id="lista-carrinho" class="carrinho__lista"></ul>
+
+          <div class="carrinho__resumo">
+            <div class="carrinho__resumo-info">
+              <p class="carrinho__rotulo">Total geral</p>
+              <p id="total-carrinho" class="carrinho__total" aria-live="polite"></p>
+              <p class="carrinho__aviso">
+                Pagamento simulado nesta versão acadêmica. Nenhum dado real de
+                cartão é coletado.
+              </p>
+            </div>
+
+            <fieldset
+              id="pagamento-pedido"
+              class="pagamento"
+              aria-required="true"
+              aria-describedby="pagamento-ajuda erro-pagamento"
+            >
+              <legend class="carrinho__rotulo">Forma de pagamento</legend>
+              <p id="pagamento-ajuda" class="pagamento__ajuda">
+                Escolha uma opção simulada para concluir o pedido.
+              </p>
+              <div class="pagamento__opcoes">
+                <label class="pagamento__opcao">
+                  <input type="radio" name="pagamento" value="dinheiro" />
+                  <span>Dinheiro</span>
+                </label>
+                <label class="pagamento__opcao">
+                  <input type="radio" name="pagamento" value="cartao-ficticio" />
+                  <span>Cartão fictício</span>
+                </label>
+              </div>
+              <p id="erro-pagamento" class="carrinho__erro" role="alert"></p>
+            </fieldset>
+
+            <div class="carrinho__acoes">
+              <button type="button" id="concluir-pedido" class="botao botao--primario">
+                Concluir pedido
+              </button>
+              <a class="botao botao--secundario" href="menu.html">Continuar escolhendo</a>
+            </div>
+          </div>
+        </div>
+
+        <section
+          id="confirmacao-pedido"
+          class="confirmacao"
+          aria-labelledby="titulo-confirmacao"
+          tabindex="-1"
+          hidden
+        >
+          <p class="confirmacao__selo">Pedido confirmado</p>
+          <h2 id="titulo-confirmacao">Tudo certo, seu café está a caminho!</h2>
+          <p id="pedido-detalhe" class="confirmacao__detalhe"></p>
+          <p id="pedido-data" class="confirmacao__data"></p>
+          <p id="pedido-pagamento" class="confirmacao__detalhe"></p>
+          <p id="pedido-status" class="confirmacao__status"></p>
+
+          <ul id="pedido-itens" class="confirmacao__lista"></ul>
+
+          <p class="confirmacao__total">
+            Total do pedido: <strong id="pedido-total"></strong>
+          </p>
+
+          <a class="botao botao--primario" href="menu.html">Fazer novo pedido</a>
+        </section>
+
+        <section class="historico" aria-labelledby="titulo-historico">
+          <div class="historico__cabecalho">
+            <div>
+              <p class="selo">Seus registros</p>
+              <h2 id="titulo-historico" tabindex="-1">Histórico de pedidos</h2>
+            </div>
+
+            <button
+              type="button"
+              id="limpar-historico"
+              class="botao botao--secundario"
+              hidden
+            >
+              Limpar histórico
+            </button>
+          </div>
+
+          <p
+            id="status-historico"
+            class="visualmente-oculto"
+            role="status"
+            aria-live="polite"
+          ></p>
+
+          <div id="historico-vazio" class="estado" hidden>
+            <p class="estado__mensagem">
+              Nenhum pedido no histórico. Seus pedidos confirmados aparecerão aqui.
+            </p>
+            <div class="estado__acao">
+              <a class="botao botao--primario" href="menu.html">Fazer um pedido</a>
+            </div>
+          </div>
+
+          <ul id="lista-historico" class="historico__lista"></ul>
+        </section>
+      </section>
+    </main>
+
+    <dialog
+      id="dialogo-limpar-historico"
+      class="dialogo"
+      aria-labelledby="titulo-limpar-historico"
+    >
+      <div class="dialogo__conteudo">
+        <h2 id="titulo-limpar-historico">Limpar histórico?</h2>
+        <p>
+          Os pedidos salvos neste navegador serão removidos. Essa ação não pode
+          ser desfeita.
+        </p>
+        <div class="dialogo__acoes">
+          <button type="button" id="cancelar-limpeza" class="botao botao--secundario">
+            Cancelar
+          </button>
+          <button type="button" id="confirmar-limpeza" class="botao botao--perigo">
+            Limpar tudo
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <footer class="rodape">
+      <div class="container rodape__conteudo">
+        <p><strong>Café na Mão</strong> — projeto acadêmico de pedidos de bebidas.</p>
+        <p>Pagamento simulado. Nenhum dado real de cartão é coletado.</p>
+      </div>
+    </footer>
+
+    <script src="js/dados.js" defer></script>
+    <script src="js/detalhes.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/carrinho.js" defer></script>
+    <script src="js/historico.js" defer></script>
+    <script src="js/pedidos.js" defer></script>
+  </body>
+</html>

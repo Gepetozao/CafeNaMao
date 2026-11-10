@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Café na Mão: escolha sua bebida, monte seu pedido e retire sem fila."
+    />
+    <title>Café na Mão | Bebidas do seu jeito</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="pular-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="cabecalho">
+      <div class="container cabecalho__conteudo">
+        <a class="logo" href="index.html">
+          <span class="logo__selo" aria-hidden="true">C</span>
+          <span>Café na Mão</span>
+        </a>
+
+        <nav class="menu" aria-label="Navegação principal">
+          <a class="menu__link menu__link--ativo" href="index.html" aria-current="page">Início</a>
+          <a class="menu__link" href="menu.html">Menu</a>
+          <a class="menu__link" href="pedidos.html">Pedidos</a>
+          <a class="menu__link" href="sobre.html">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <section class="hero container" aria-labelledby="titulo-principal">
+        <div class="hero__conteudo">
+          <p class="selo">Bebidas do seu jeito</p>
+          <h1 id="titulo-principal">
+            Seu café,
+            <span class="destaque">na mão.</span>
+          </h1>
+          <p class="hero__texto">
+            Escolha sua bebida, defina a quantidade e confirme o pedido em poucos
+            toques. Sem fila e sem complicação.
+          </p>
+          <div class="hero__acoes">
+            <a class="botao botao--primario" href="menu.html">Ver o menu</a>
+            <a class="botao botao--secundario" href="sobre.html">Conhecer o projeto</a>
+          </div>
+        </div>
+
+        <div class="hero__visual" aria-hidden="true">
+          <div class="cartao-visual">
+            <span class="cartao-visual__rotulo">Sem fila</span>
+            <div class="xicara">
+              <span class="xicara__cafe"></span>
+            </div>
+            <p class="cartao-visual__legenda">Café fresco<br />em poucos toques</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="passos container" aria-labelledby="titulo-passos">
+        <div class="passos__cabecalho">
+          <p class="selo">Simples assim</p>
+          <h2 id="titulo-passos">Do desejo ao café em três passos</h2>
+        </div>
+
+        <ol class="passos__lista">
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">01</span>
+            <h3>Escolha</h3>
+            <p>Consulte o catálogo e encontre a bebida que combina com o seu gosto.</p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">02</span>
+            <h3>Confirme</h3>
+            <p>Ajuste a quantidade, revise o resumo e confira o valor total.</p>
+          </li>
+          <li class="passo">
+            <span class="passo__numero" aria-hidden="true">03</span>
+            <h3>Retire</h3>
+            <p>Finalize o pedido simulado e acompanhe o status até a retirada.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="chamada container" aria-labelledby="titulo-chamada">
+        <div>
+          <h2 id="titulo-chamada">Pronto para pedir?</h2>
+          <p>Explore o menu e monte sua primeira bebida.</p>
+        </div>
+        <a class="botao botao--primario" href="menu.html">Começar pedido</a>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <div class="container rodape__conteudo">
+        <p><strong>Café na Mão</strong> — projeto acadêmico de pedidos de bebidas.</p>
+        <p>Pagamento simulado. Nenhum dado real de cartão é coletado.</p>
+      </div>
+    </footer>
+  </body>
+</html>
